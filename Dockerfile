@@ -3,8 +3,8 @@ FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
-# JAR 파일 복사
-COPY build/libs/*.jar app.jar
+# 특정 JAR 파일만 복사 (plain이 아닌 실행 가능한 JAR)
+COPY build/libs/todo-api-0.0.1-SNAPSHOT.jar app.jar
 
 # 로그 디렉토리 생성
 RUN mkdir -p /var/log/todoapi
