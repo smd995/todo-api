@@ -19,6 +19,10 @@ echo "환경변수 설정 완료"
 echo "기존 컨테이너 중지 중..."
 docker-compose down
 
+# gradlew 실행 권한 부여
+echo "gradlew 실행 권한 설정..."
+chmod +x gradlew
+
 # 애플리케이션 빌드
 echo "애플리케이션 빌드 중..."
 ./gradlew clean build -x test
@@ -26,6 +30,8 @@ echo "애플리케이션 빌드 중..."
 # 빌드 확인
 if [ ! -f build/libs/*.jar ]; then
     echo "❌ 빌드 실패 - JAR 파일을 찾을 수 없습니다"
+    echo "빌드 로그 확인:"
+    ls -la build/libs/ || echo "build/libs 디렉토리가 없습니다"
     exit 1
 fi
 
