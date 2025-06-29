@@ -27,21 +27,27 @@ chmod +x gradlew
 echo "애플리케이션 빌드 중..."
 ./gradlew clean build -x test
 
-# 빌드 확인
-if [ ! -f build/libs/*.jar ]; then
+# 빌드 확인 (정확한 파일명 체크)
+if [ ! -f "build/libs/todo-api-0.0.1-SNAPSHOT.jar" ]; then
     echo "❌ 빌드 실패 - JAR 파일을 찾을 수 없습니다"
-    echo "빌드 로그 확인:"
-    ls -la build/libs/ || echo "build/libs 디렉토리가 없습니다"
+    echo "빌드 결과:"
+    ls -la build/libs/
     exit 1
 fi
+
+echo "✅ JAR 파일 생성 확인: build/libs/todo-api-0.0.1-SNAPSHOT.jar"
 
 # Docker 이미지 빌드 및 실행
 echo "Docker 컨테이너 시작 중..."
 docker-compose up -d --build
 
+# 컨테이너 시작 확인
+sleep 10
+docker ps
+
 # Health Check
 echo "배포 완료! Health Check 중..."
-sleep 30
+sleep 20
 
 for i in {1..5}; do
     echo "Health Check 시도 $i/5..."
@@ -52,10 +58,13 @@ for i in {1..5}; do
         exit 0
     else
         echo "⏳ Health Check 재시도..."
+        docker ps
+        docker-compose logs --tail=10
         sleep 10
     fi
 done
 
 echo "❌ 배포 실패 - Health Check 실패"
-echo "로그 확인: docker-compose logs"
+echo "상세 로그:"
+docker-compose logs
 exit 1
