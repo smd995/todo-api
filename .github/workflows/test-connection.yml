@@ -1,21 +1,26 @@
-name: Test SSH Connection
+name: Test Connection
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-ssh:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test SSH Connection
+      - name: Test SSH
+        run: |
+          echo "Testing connection to ${{ secrets.EC2_HOST }}"
+          timeout 10 nc -zv ${{ secrets.EC2_HOST }} 22
+
+      - name: SSH Test
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 30s
           script: |
             echo "SSH 연결 성공!"
+            hostname
             whoami
-            pwd
-            ls -la
