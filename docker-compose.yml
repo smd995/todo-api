@@ -12,6 +12,7 @@ services:
       - DB_PORT=5432
       - DB_NAME=todoapi
       - DB_USERNAME=postgres
+      - JAVA_OPTS=-Xmx256m -Xms128m  # JVM 메모리 제한
     volumes:
       - /var/log/todoapi:/var/log/todoapi
     restart: unless-stopped
